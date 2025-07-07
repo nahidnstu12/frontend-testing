@@ -1,0 +1,76 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "jhon",
+      "password": "$2b$10$086H1yc8P9kSnBhHn1LMWe94wHoy0N6K8voR5a5SPLCxBQtnku8LC"
+    },
+    {
+      "id": "2",
+      "username": "mike",
+      "password": "$2b$10$086H1yc8P9kSnBhHn1LMWe94wHoy0N6K8voR5a5SPLCxBQtnku8LC"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "1",
+      "userId": "1",
+      "title": "First Task",
+      "completed": false
+    },
+    {
+      "id": "2",
+      "userId": "1",
+      "title": "Second Task",
+      "completed": true
+    },
+    {
+      "id": "3",
+      "userId": "1",
+      "title": "Third Task",
+      "completed": false
+    },
+    {
+      "id": "4",
+      "userId": "1",
+      "title": "Fourth Task",
+      "completed": true
+    },
+    {
+      "id": "5",
+      "userId": "2",
+      "title": "Fifth Task",
+      "completed": false
+    },
+    {
+      "id": "6",
+      "userId": "2",
+      "title": "Sixth Task",
+      "completed": true
+    },
+    {
+      "id": "7",
+      "userId": "2",
+      "title": "Seventh Task",
+      "completed": false
+    },
+    {
+      "id": "8",
+      "userId": "2",
+      "title": "Eighth Task",
+      "completed": true
+    },
+    {
+      "id": "9",
+      "userId": "2",
+      "title": "Ninth Task",
+      "completed": false
+    },
+    {
+      "id": "10",
+      "userId": "1",
+      "title": "Tenth Task",
+      "completed": true
+    }
+  ]
+}

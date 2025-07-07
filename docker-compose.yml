@@ -1,0 +1,79 @@
+services:
+  traefik:
+    image: traefik:v2.10
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - app-network
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    volumes:
+      - ./api:/app
+      - go-modules:/go/pkg/mod
+    environment:
+      - SERVER_PORT=8081
+      - DB_HOST=postgresql
+      - DB_USER=admin
+      - DB_PASSWORD=password
+      - DB_NAME=postgres
+      - DB_PORT=5432
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`sem-v1.local`) && PathPrefix(`/api`)"
+      - "traefik.http.services.api.loadbalancer.server.port=8081"
+    depends_on:
+      - postgresql
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    environment:
+      - VITE_PORT=8080
+      - VITE_API_URL=http://sem-v1.local
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`sem-v1.local`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=8080"
+    networks:
+      - app-network
+
+  postgresql:
+    image: docker.io/bitnami/postgresql:17
+    container_name: postgresql
+    ports:
+      - '5433:5432'
+    volumes:
+      - 'postgresql_data:/bitnami/postgresql'
+      - './api/databases/postgresql/init:/docker-entrypoint-initdb.d'
+    environment:
+      - POSTGRESQL_USERNAME=admin
+      - POSTGRESQL_PASSWORD=password
+      - POSTGRESQL_DATABASE=postgres
+      - POSTGRESQL_POSTGRES_PASSWORD=password
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgresql_data:
+    driver: local
+  go-modules:
