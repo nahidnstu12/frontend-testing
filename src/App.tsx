@@ -13,6 +13,12 @@ const Home = lazy(() => import('./pages/frontend/home'));
 const Login = lazy(() => import('./pages/auth/login'));
 const Dashboard = lazy(() => import('./pages/app/dashboard'));
 
+// Loading component
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+  </div>
+);
 
 const router = createBrowserRouter([
   {
@@ -24,7 +30,7 @@ const router = createBrowserRouter([
     path: '/login',
     element: (
       <PublicRouteContext>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<LoadingSpinner />}>
           <Login />
         </Suspense>
       </PublicRouteContext>
@@ -35,7 +41,7 @@ const router = createBrowserRouter([
     path: '/dashboard',
     element: (
       <ProtectedRouteContext>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<LoadingSpinner />}>
           <Dashboard />
         </Suspense>
       </ProtectedRouteContext>

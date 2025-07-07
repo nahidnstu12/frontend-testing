@@ -1,24 +1,25 @@
 import { UserInfo } from '@/components/shared/user-info';
 import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/store/authContext';
 import { type User } from '@/types/shared';
-import { LogOut, Settings } from 'lucide-react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router';
-import { logout } from '@/store/features/auth/authSlice';
 import Cookies from 'js-cookie';
+import { LogOut, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
 interface UserMenuContentProps {
     user: User;
 }
 
 export function UserMenuContent({ user }: UserMenuContentProps) {
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { logout } = useAuth();
 
     const handleLogout = () => {
         Cookies.remove('token');
         localStorage.removeItem('user');
-        dispatch(logout());
+        // dispatch(logout());
+        logout();
         navigate('/login');
     };
 

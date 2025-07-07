@@ -9,6 +9,8 @@ export function ProtectedRouteContext({ children }: ProtectedRouteProps) {
   const { user, token } = useAuth();
   const location = useLocation();
 
+
+
   if (!user || !token) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }

@@ -7,7 +7,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 
 const app = express();
 app.use(cors({
-  origin: 'http://localhost:5555',
+  origin: ['http://localhost:5555', 'http://localhost:8080'],
   credentials: true,
 }));
 app.use(express.json());
@@ -77,7 +77,7 @@ app.post('/api/login', async (req, res) => {
   const user = db.data?.users.find(u => u.username === username);
   if (!user || !(await bcrypt.compare(password, user.password)))
     return res.status(401).json({ error: 'Invalid credentials' });
-  const token = jwt.sign({ id: user.id, username: user.username }, SECRET, { expiresIn: '1h' });
+  const token = jwt.sign({ id: user.id, username: user.username }, SECRET, { expiresIn: '24h' });
   res.json({ token });
 });
 
@@ -87,6 +87,16 @@ app.get('/api/tasks', auth, async (req, res) => {
   const tasks = db.data?.tasks.filter(t => t.userId === req.user.id) || [];
   res.json(tasks);
 });
+
+// Validate token (protected)
+app.get('/api/validate-token', auth, async (req, res) => {
+  res.json({ 
+    valid: true, 
+    user: req.user,
+    message: 'Token is valid' 
+  });
+});
+
 app.get('/api/public/tasks', async (req, res) => {
   await db.read();
   res.json(db.data?.tasks || []);
@@ -104,6 +114,22 @@ app.post('/api/tasks', auth, async (req, res) => {
   db.data?.tasks.push(newTask);
   await db.write();
   res.status(201).json(newTask);
+});
+
+// Toggle task completion (protected)
+app.put('/api/tasks/:id', auth, async (req, res) => {
+  await db.read();
+  const { id } = req.params;
+  const { completed } = req.body;
+  
+  const task = db.data?.tasks.find(t => t.id === id && t.userId === req.user.id);
+  if (!task) {
+    return res.status(404).json({ error: 'Task not found' });
+  }
+  
+  task.completed = completed;
+  await db.write();
+  res.json(task);
 });
 
 // --- Start server ---

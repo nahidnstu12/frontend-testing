@@ -1,13 +1,14 @@
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import { UserInfo } from '@/components/shared/user-info';
 import { UserMenuContent } from '@/components/shared/user-menu-content';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useSelector } from 'react-redux';
+import { useAuth } from '@/store/authContext';
 import { ChevronsUpDown } from 'lucide-react';
 
 export function NavUser() {
-    const { user } = useSelector((state: any) => state.auth);
+    // const { user } = useSelector((state: any) => state.auth);
+    const { user } = useAuth();
     const { state } = useSidebar();
     const isMobile = useIsMobile();
 

@@ -35,6 +35,9 @@ export default defineConfig(({ command, mode }) => {
       proxy: {
         '/api': env.VITE_API_BASE_URL || 'http://localhost:8081',
       },
+      watch: {
+        ignored: ['**/api/db.json'],
+      }
     },
     build: {
       outDir: 'dist',
