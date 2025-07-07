@@ -6,7 +6,10 @@ import bcrypt from 'bcryptjs';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5555',
+  credentials: true,
+}));
 app.use(express.json());
 
 const SECRET = 'supersecret'; // Use env in real apps
@@ -83,6 +86,14 @@ app.get('/api/tasks', auth, async (req, res) => {
   await db.read();
   const tasks = db.data?.tasks.filter(t => t.userId === req.user.id) || [];
   res.json(tasks);
+});
+app.get('/api/public/tasks', async (req, res) => {
+  await db.read();
+  res.json(db.data?.tasks || []);
+});
+
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'Everything is working fine' });
 });
 
 // Add task (protected)

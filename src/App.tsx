@@ -4,9 +4,10 @@ import {
   RouterProvider,
 } from "react-router";
 import './App.css';
-import { ProtectedRoute } from './components/auth/protected-route';
-import { PublicRoute } from './components/auth/public-route';
-import { usePersistAuth } from './hooks/use-persist-auth';
+
+import { ProtectedRouteContext } from './components/auth/protected-route-context';
+import { PublicRouteContext } from './components/auth/public-route-context';
+import { AuthProvider } from './store/authContext';
 
 const Home = lazy(() => import('./pages/frontend/home'));
 const Login = lazy(() => import('./pages/auth/login'));
@@ -22,32 +23,34 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: (
-      <PublicRoute>
+      <PublicRouteContext>
         <Suspense fallback={<div>Loading...</div>}>
           <Login />
         </Suspense>
-      </PublicRoute>
+      </PublicRouteContext>
     ),
   },
   
   {
     path: '/dashboard',
     element: (
-      <ProtectedRoute>
+      <ProtectedRouteContext>
         <Suspense fallback={<div>Loading...</div>}>
           <Dashboard />
         </Suspense>
-      </ProtectedRoute>
+      </ProtectedRouteContext>
     ),
   },
   
 ]);
 
 function App() {
-  usePersistAuth();
+  // usePersistAuth();
   
   return (
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   );
 }
 

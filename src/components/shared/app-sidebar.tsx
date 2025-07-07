@@ -3,7 +3,7 @@ import { NavMain } from '@/components/shared/nav-main';
 import { NavUser } from '@/components/shared/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types/shared';
-import { Bell, FileText, LayoutGrid, Sliders, User } from 'lucide-react';
+import { LayoutGrid } from 'lucide-react';
 import { Link } from 'react-router';
 import AppLogo from './app-logo';
 
@@ -18,26 +18,26 @@ const mainNavItems: NavItem[] = [
     //     href: '/institutions',
     //     icon: Building2,
     // },
-    {
-        title: 'Users',
-        href: '/users',
-        icon: User,
-    },
-    {
-        title: 'Notices',
-        href: '/notices',
-        icon: Bell,
-    },
-    {
-        title: 'Sliders',
-        href: '/sliders',
-        icon: Sliders,
-    },
-    {
-        title: 'Static Contents',   
-        href: '/static-contents',
-        icon: FileText,
-    },
+    // {
+    //     title: 'Users',
+    //     href: '/users',
+    //     icon: User,
+    // },
+    // {
+    //     title: 'Notices',
+    //     href: '/notices',
+    //     icon: Bell,
+    // },
+    // {
+    //     title: 'Sliders',
+    //     href: '/sliders',
+    //     icon: Sliders,
+    // },
+    // {
+    //     title: 'Static Contents',   
+    //     href: '/static-contents',
+    //     icon: FileText,
+    // },
     // {
     //     title: 'Teachers',
     //     href: '/teachers',
