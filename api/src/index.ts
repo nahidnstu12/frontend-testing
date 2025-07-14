@@ -133,7 +133,9 @@ app.put('/api/tasks/:id', auth, async (req, res) => {
 });
 
 // --- Start server ---
-const PORT = process.env.PORT || 8081;
+const PORT = process.env.BACKEND_PORT || 8081;
+console.log("Backend Port", process.env.BACKEND_PORT);
+
 app.listen(PORT, () => {
   console.log(`🟢 API server running at http://localhost:${PORT}`);
 });

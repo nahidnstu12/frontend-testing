@@ -1,10 +1,10 @@
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import "../../test/_mocks";
+import "../../test/_mocks.tsx";
 import { useAuth } from "@/store/authContext";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
-import "../../test/_mocks";
+import "../../test/_mocks.tsx";
 import Login from "./login";
 import api from "@/store/api";
 import { toast } from 'sonner';

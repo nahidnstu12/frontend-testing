@@ -6,7 +6,9 @@ vi.mock("@/store/authContext", () => ({
 
 vi.mock("@/store/api", () => ({
     default: {
-        post: vi.fn()
+        get: vi.fn(),
+        post: vi.fn(),
+        put: vi.fn(),
     }
 }));
 
@@ -16,6 +18,8 @@ vi.mock('sonner', () => ({
     error: vi.fn(),
   },
 }));
+
+
 
 // vi.mock("@/store/api", () => ({
 //   default: {
