@@ -123,6 +123,7 @@ app.put('/api/tasks/:id', auth, async (req, res) => {
   const { completed } = req.body;
   
   const task = db.data?.tasks.find(t => t.id === id && t.userId === req.user.id);
+  
   if (!task) {
     return res.status(404).json({ error: 'Task not found' });
   }

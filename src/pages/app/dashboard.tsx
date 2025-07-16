@@ -1,72 +1,83 @@
-import AppLayout from '@/layouts/app-layout';
-import api from '@/store/api';
-import { useAuth } from '@/store/authContext';
-import { type BreadcrumbItem } from '@/types/shared';
-import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { useTasks } from "@/hooks/useTasks";
+import AppLayout from "@/layouts/app-layout";
+import { useAuth } from "@/store/authContext";
+import { type BreadcrumbItem } from "@/types/shared";
+import { useEffect, useState } from "react";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Dashboard',
-    href: '/dashboard',
+    title: "Dashboard",
+    href: "/dashboard",
   },
 ];
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const [tasks, setTasks] = useState<any[]>([]);
   const [newTask, setNewTask] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const handleAddTask = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTask.trim()) return;
-
-    setLoading(true);
-    try {
-      const response = await api.post('/tasks', { title: newTask });
-      setTasks([...tasks, response.data]);
-      setNewTask('');
-      toast.success('Task added successfully');
-    } catch (error: any) {
-      console.error('Failed to add task:', error);
-      toast.error(error?.response?.data?.error || 'Failed to add task');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { tasks, fetchTasks, createTask, toggleComplete, loading } = useTasks();
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await api.get('/tasks');
-        setTasks(response.data);
-      } catch (error: any) {
-        console.error('Failed to fetch tasks:', error);
-        toast.error(error?.response?.data?.error || 'Failed to fetch tasks');
-      }
-    };
     fetchTasks();
   }, []);
 
-  const handleToggleTask = async (id: string) => {
-    try {
-      const currentTask = tasks.find((task) => task.id === id);
-      if (!currentTask) return;
+  const handleAddTask = async (e: React.FormEvent) => {
+    e.preventDefault();
+    createTask(newTask);
+    setNewTask('');
+  }
 
-      const response = await api.put(`/tasks/${id}`, {
-        completed: !currentTask.completed,
-      });
+  // const [tasks, setTasks] = useState<any[]>([]);
+  // 
+  // const [loading, setLoading] = useState(false);
 
-      // Update with server response to ensure consistency
-      setTasks(tasks.map((task) => (task.id === id ? response.data : task)));
-      toast.success('Task updated successfully');
-    } catch (error: any) {
-      console.error('Failed to toggle task:', error);
-      toast.error(error?.response?.data?.error || 'Failed to update task');
-    }
-  };
+  // const handleAddTask = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (!newTask.trim()) return;
 
+  //   setLoading(true);
+  //   try {
+  //     const response = await api.post('/tasks', { title: newTask });
+  //     setTasks([...tasks, response.data]);
+  //     setNewTask('');
+  //     toast.success('Task added successfully');
+  //   } catch (error: any) {
+  //     console.error('Failed to add task:', error);
+  //     toast.error(error?.response?.data?.error || 'Failed to add task');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   const fetchTasks = async () => {
+  //     try {
+  //       const response = await api.get('/tasks');
+  //       setTasks(response.data);
+  //     } catch (error: any) {
+  //       console.error('Failed to fetch tasks:', error);
+  //       toast.error(error?.response?.data?.error || 'Failed to fetch tasks');
+  //     }
+  //   };
+  //   fetchTasks();
+  // }, []);
+
+  // const handleToggleTask = async (id: string) => {
+  //   try {
+  //     const currentTask = tasks.find((task) => task.id === id);
+  //     if (!currentTask) return;
+
+  //     const response = await api.put(`/tasks/${id}`, {
+  //       completed: !currentTask.completed,
+  //     });
+
+  //     // Update with server response to ensure consistency
+  //     setTasks(tasks.map((task) => (task.id === id ? response.data : task)));
+  //     toast.success('Task updated successfully');
+  //   } catch (error: any) {
+  //     console.error('Failed to toggle task:', error);
+  //     toast.error(error?.response?.data?.error || 'Failed to update task');
+  //   }
+  // };
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
@@ -90,7 +101,7 @@ export default function Dashboard() {
             disabled={loading || !newTask.trim()}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Adding...' : 'Add'}
+            {loading ? "Adding..." : "Add"}
           </button>
         </form>
 
@@ -104,11 +115,11 @@ export default function Dashboard() {
             <input
               type="checkbox"
               checked={task.completed}
-              onChange={() => handleToggleTask(task.id)}
+              onChange={() => toggleComplete(task.id)}
               className="w-4 h-4"
             />
             <span
-              className={task.completed ? 'line-through text-gray-500' : ''}
+              className={task.completed ? "line-through text-gray-500" : ""}
             >
               {task.title}
             </span>

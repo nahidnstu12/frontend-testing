@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8081/api',
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -24,9 +24,18 @@ api.interceptors.response.use(
   (error) => {
     console.error('API Error:', error);
     
-    // If it's a 401 error, don't redirect - let the component handle it
+    // If it's a 401 error, clear token and redirect to login
     if (error.response?.status === 401) {
-      console.log('Unauthorized - token might be expired');
+      console.log('Unauthorized - token expired, redirecting to login');
+      
+      // Clear the token and user data
+      Cookies.remove('token');
+      localStorage.removeItem('user');
+      
+      // Redirect to login page
+      window.location.href = '/login';
+      
+      return Promise.reject(error);
     }
     
     return Promise.reject(error);
