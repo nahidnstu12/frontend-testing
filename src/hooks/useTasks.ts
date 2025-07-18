@@ -1,32 +1,34 @@
-import api from '@/store/api';
-import { useTaskStore } from '@/store/task-store';
-import { toast } from 'sonner';
+import api from "@/store/api";
+import { useTaskStore } from "@/store/task-store";
+import { toast } from "sonner";
 
 export const useTasks = () => {
-  const {
-    tasks, setTasks, addTask, toggleTask, loading, setLoading
-  } = useTaskStore();
+  const { tasks, setTasks, addTask, toggleTask, loading, setLoading, isTaskActionLoading, setIsTaskActionLoading } =
+    useTaskStore();
 
   const fetchTasks = async () => {
     try {
-      const res = await api.get('/tasks');
-      setTasks(res.data);
+      setLoading(true);
+      const res = await api.get("/tasks");
+      setTasks(Array.isArray(res.data) ? res.data : []);
     } catch (err: any) {
-      toast.error(err?.response?.data?.error || 'Failed to fetch tasks');
+      toast.error(err?.response?.data?.error || "Failed to fetch tasks");
+    } finally {
+      setLoading(false);
     }
   };
 
   const createTask = async (title: string) => {
     if (!title.trim()) return;
-    setLoading(true);
+    setIsTaskActionLoading(true);
     try {
-      const res = await api.post('/tasks', { title });
+      const res = await api.post("/tasks", { title });
       addTask(res.data);
-      toast.success('Task added');
+      toast.success("Task added");
     } catch (err: any) {
-      toast.error(err?.response?.data?.error || 'Add task failed');
+      toast.error(err?.response?.data?.error || "Add task failed");
     } finally {
-      setLoading(false);
+      setIsTaskActionLoading(false);
     }
   };
 
@@ -38,12 +40,12 @@ export const useTasks = () => {
         completed: !current.completed,
       });
       toggleTask(res.data);
-      toast.success('Task updated');
+      toast.success("Task updated");
     } catch (err: any) {
       console.log("err", err);
-      toast.error(err?.response?.data?.error || 'Update task failed');
+      toast.error(err?.response?.data?.error || "Update task failed");
     }
   };
 
-  return { tasks, loading, fetchTasks, createTask, toggleComplete };
+  return { tasks, loading, fetchTasks, createTask, toggleComplete, isTaskActionLoading };
 };

@@ -14,32 +14,29 @@ vi.mock("@/layouts/app-layout", () => ({
   ),
 }));
 
-describe("TaskList Suite 1", () => {
+const mockAuth = () => ({
+  user: { id: 1, username: "Test User" },
+  token: "fake-token",
+  login: vi.fn(),
+  logout: vi.fn(),
+});
+
+const renderDashboard = () => {
+  (useAuth as any).mockReturnValue(mockAuth());
+  vi.mocked(api.get).mockResolvedValue({ data: [] });
+  vi.mocked(api.post).mockResolvedValue({
+    data: { id: 1, title: "Testing Task Added", completed: false },
+  });
+  return render(
+    <MemoryRouter>
+      <Dashboard />
+    </MemoryRouter>
+  );
+};
+
+describe("TaskList Component", () => {
   it("Renders task input field and Add button", async () => {
-    const mockFake = vi.fn();
-
-    // Mock useAuth
-    (useAuth as any).mockReturnValue({
-      user: { id: 1, username: "Test User" },
-      token: "fake-token",
-      login: mockFake,
-      logout: mockFake,
-    });
-
-    // Mock the API calls
-    vi.mocked(api.get).mockResolvedValue({ data: [] });
-    vi.mocked(api.post).mockResolvedValue({
-      data: { id: 1, title: "Test Task" },
-    });
-    vi.mocked(api.put).mockResolvedValue({
-      data: { id: 1, title: "Test Task", completed: true },
-    });
-
-    render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
-    );
+    renderDashboard();
 
     // Wait for the component to render and async operations to complete
     await waitFor(() => {
@@ -49,34 +46,12 @@ describe("TaskList Suite 1", () => {
     expect(screen.getByPlaceholderText("Add a task")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Add" })).toBeInTheDocument();
   });
-});
 
-describe("TaskList Suite 2", () => {
   it("Fills task input and submits", async () => {
-    const mockFake = vi.fn();
+    renderDashboard();
 
-    // Mock the API calls
-    vi.mocked(api.get).mockResolvedValue({ data: [] });
-    vi.mocked(api.post).mockResolvedValue({
-      data: { id: 1, title: "Testing Task Added", completed: false },
-    });
-
-    // Mock useAuth
-    (useAuth as any).mockReturnValue({
-      user: { id: 1, username: "Test User" },
-      token: "fake-token",
-      login: mockFake,
-      logout: mockFake,
-    });
-
-    render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
-    );
-
-    const input = screen.getByRole("textbox");
-    const btn = screen.getByRole("button", { name: "Add" });
+    const input = await screen.findByRole("textbox");
+    const btn = await screen.findByRole("button", { name: "Add" });
 
     await userEvent.type(input, "Testing Task Added");
     await userEvent.click(btn);
@@ -89,12 +64,8 @@ describe("TaskList Suite 2", () => {
     // Wait for the task to appear
     await screen.findByText("Testing Task Added");
   });
-});
 
-describe("TaskList Suite 3", () => {
   it("Test toggling a task", async () => {
-    const mockFake = vi.fn();
-
     // Mock the API calls
     vi.mocked(api.get).mockResolvedValue({
       data: [
@@ -124,14 +95,8 @@ describe("TaskList Suite 3", () => {
       },
     });
 
-    // Mock useAuth
-    (useAuth as any).mockReturnValue({
-      user: { id: 1, username: "Test User" },
-      token: "fake-token",
-      login: mockFake,
-      logout: mockFake,
-    });
-
+    (useAuth as any).mockReturnValue(mockAuth());
+    
     render(
       <MemoryRouter>
         <Dashboard />

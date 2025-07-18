@@ -10,15 +10,18 @@ type Task = {
 type TaskStore = {
   tasks: Task[];
   loading: boolean;
+  isTaskActionLoading: boolean;
   setTasks: (tasks: Task[]) => void;
   addTask: (task: Task) => void;
   toggleTask: (task: Task) => void;
   setLoading: (val: boolean) => void;
+  setIsTaskActionLoading: (val: boolean) => void;
 };
 
 export const useTaskStore = create<TaskStore>((set) => ({
   tasks: [],
   loading: false,
+  isTaskActionLoading: false,
   setTasks: (tasks) => set({ tasks }),
   addTask: (task) => set((state) => ({ tasks: [...state.tasks, task] })),
   toggleTask: (updatedTask) =>
@@ -28,4 +31,5 @@ export const useTaskStore = create<TaskStore>((set) => ({
       ),
     })),
   setLoading: (val) => set({ loading: val }),
+  setIsTaskActionLoading: (val) => set({ isTaskActionLoading: val }),
 }));

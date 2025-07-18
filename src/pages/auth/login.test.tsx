@@ -7,18 +7,30 @@ import { MemoryRouter } from "react-router";
 import "../../test/_mocks.ts";
 import Login from "./login";
 import api from "@/store/api";
-import { toast } from 'sonner';
+import { toast } from "sonner";
 
-// const input = "Login Testing";
+const renderLogin = () => {
+  return render(
+    <MemoryRouter>
+      <Login />
+    </MemoryRouter>
+  );
+};
 
-// describe("Test Suite 1", () => {
-//   it("render headline", () => {
-//     expect(input).toBe("Login Testing");
-//   });
-// });
+const renderFillForm = async (username: string, password: string) => {
+  const usernameInput = screen.getByLabelText("Username");
+  const passwordInput = screen.getByLabelText("Password");
+  const loginBtn = screen.getByRole("button", { name: "Log in" });
+
+  await userEvent.type(usernameInput, username);
+  await userEvent.type(passwordInput, password);
+  await userEvent.click(loginBtn);
+
+  return { usernameInput, passwordInput, loginBtn };
+};
 
 // Renders form with email & password inputs
-describe("Login Test 1", () =>
+describe("Login Component", () => {
   it("Renders form with email & password inputs", () => {
     const loginMock = vi.fn();
 
@@ -26,19 +38,14 @@ describe("Login Test 1", () =>
       login: loginMock,
     });
 
-    render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>
-    );
+    renderLogin();
     // screen.debug();
 
     expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Log in" }));
-  }));
+  });
 
-describe("Login Test 3", () => {
   it("Shows error if fields are empty and user clicks Login", async () => {
     const loginMock = vi.fn();
 
@@ -46,11 +53,7 @@ describe("Login Test 3", () => {
       login: loginMock,
     });
 
-    render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>
-    );
+    renderLogin();
 
     // Click the submit button
     const loginBtn = screen.getByRole("button", { name: "Log in" });
@@ -67,20 +70,14 @@ describe("Login Test 3", () => {
     expect(userNameErr).toBeInTheDocument();
     expect(passwordErr).toBeInTheDocument();
   });
-});
 
-describe("Login Test 4", () => {
   it("Fills in email and password fields", async () => {
     const loginMock = vi.fn();
 
     (useAuth as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       login: loginMock,
     });
-    render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>
-    );
+    renderLogin();
 
     // Click the submit button
     const username = screen.getByLabelText("Username");
@@ -92,9 +89,7 @@ describe("Login Test 4", () => {
     expect(username).toHaveValue("test-user");
     expect(password).toHaveValue("pass123");
   });
-});
 
-describe("Login Test 5", () => {
   it("Calls login() function", async () => {
     const loginMock = vi.fn();
 
@@ -110,26 +105,13 @@ describe("Login Test 5", () => {
       },
     });
 
-    render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>
-    );
+    renderLogin();
 
-    // Click the submit button
-    const username = screen.getByLabelText("Username");
-    const password = screen.getByLabelText("Password");
-    const loginBtn = screen.getByRole("button", { name: "Log in" });
-
-    await userEvent.type(username, "test-user");
-    await userEvent.type(password, "pass123");
-    await userEvent.click(loginBtn);
+    await renderFillForm("test-user", "pass123");
 
     expect(loginMock).toHaveBeenCalled();
   });
-});
 
-describe("Login Test 6", () => {
   it("Calls login() function. rejected", async () => {
     const loginMock = vi.fn();
 
@@ -138,25 +120,15 @@ describe("Login Test 6", () => {
     });
 
     (api.post as unknown as ReturnType<typeof vi.fn>).mockRejectedValue({
-      error: "Invalid Credentials"
-    })
+      error: "Invalid Credentials",
+    });
 
-    render(
-      <MemoryRouter>
-        <Login />
-      </MemoryRouter>
-    );
+    renderLogin();
 
     // Click the submit button
-    const username = screen.getByLabelText("Username");
-    const password = screen.getByLabelText("Password");
-    const loginBtn = screen.getByRole("button", { name: "Log in" });
-
-    await userEvent.type(username, "test-user");
-    await userEvent.type(password, "pass123");
-    await userEvent.click(loginBtn);
+    await renderFillForm("test-user", "pass123");
 
     expect(loginMock).not.toHaveBeenCalled();
-    expect(toast.error).toHaveBeenCalledWith('Invalid Credentials');
+    expect(toast.error).toHaveBeenCalledWith("Invalid Credentials");
   });
 });
